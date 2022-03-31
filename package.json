@@ -1,0 +1,23 @@
+{
+  "name": "react-hook-wizard",
+  "version": "1.0.0",
+  "description": "Lightweight, strongly typed wizard component using react hooks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpribyl/react-hook-wizard.git"
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "hooks",
+    "wizard",
+    "steprender",
+    "steps"
+  ],
+  "author": "jpribyl",
+  "license": "MIT"
+}
