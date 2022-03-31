@@ -1,5 +1,5 @@
 {
-  "name": "react-hook-wizard",
+  "name": "react-hooks-wizard",
   "version": "1.0.0",
   "description": "Lightweight, strongly typed wizard component using react hooks",
   "main": "lib/index.js",
