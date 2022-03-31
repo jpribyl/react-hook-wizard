@@ -1,13 +1,8 @@
-import React, { useState } from 'react';
-import {
-  Link,
-  Route,
-  useHistory,
-  useLocation,
-  useParams,
-} from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
-const castArray = (...args: any) => (args[0] instanceof Array ? args[0] : args)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const castArray = (...args: any) => (args[0] instanceof Array ? args[0] : args);
 
 type UseWizard = {
   cancelledPath: string;
@@ -40,8 +35,8 @@ type GoToStepProps = React.HTMLAttributes<Element> & {
 };
 
 type WizardType = React.FunctionComponent<UseWizardProps> & {
-  Cancel: React.FC<Omit<React.HTMLAttributes<Element>, 'to' | 'onClick'>>;
-  Complete: React.FC<Omit<React.HTMLAttributes<Element>, 'to' | 'onClick'>>;
+  Cancel: React.FC<Omit<React.HTMLAttributes<Element>, "to" | "onClick">>;
+  Complete: React.FC<Omit<React.HTMLAttributes<Element>, "to" | "onClick">>;
   GoToStep: React.FC<GoToStepProps>;
   NextStep: React.FC<React.HTMLAttributes<Element>>;
   PreviousStep: React.FC<React.HTMLAttributes<Element>>;
@@ -49,30 +44,31 @@ type WizardType = React.FunctionComponent<UseWizardProps> & {
   Step: React.FC;
 };
 
-export const WizardContext = React.createContext<UseWizard | null>(null);
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+export const WizardContext = React.createContext<UseWizard>(undefined!);
 export const useWizard = ({
   children,
   cancelledPath,
   completedPath,
   initialStepIndex = 0,
-  onCancel = () => {},
-  onComplete = () => {},
+  onCancel = () => undefined,
+  onComplete = () => undefined,
   path,
 }: UseWizardProps): UseWizard => {
   const stepCount = (children && castArray(children).length) || 0;
   const [maxStepReached, setMaxStepReached] = useState(initialStepIndex);
   const [isFirstRender, setIsFirstRender] = useState(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const params = useParams<UseWizardMatchParams>();
   const stepIndex = isFirstRender
     ? initialStepIndex
-    : parseInt(params.stepIndex || '0', 10) || 0;
+    : parseInt(params.stepIndex || "0", 10) || 0;
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
     if (isFirstRender) {
-      history.push(`${path}${initialStepIndex}/`);
+      navigate(`${path}${initialStepIndex}/`);
       setIsFirstRender(false);
     } else {
       setMaxStepReached(Math.max(stepIndex, maxStepReached));
@@ -81,7 +77,7 @@ export const useWizard = ({
     cancelledPath,
     completedPath,
     location.pathname,
-    history,
+    navigate,
     initialStepIndex,
     isFirstRender,
     maxStepReached,
@@ -104,7 +100,7 @@ export const useWizard = ({
   };
 };
 
-const WizardContainer: React.FunctionComponent<UseWizardProps> = props => {
+export const Wizard: WizardType = (props) => {
   const { children } = props;
   const wizard = useWizard(props);
   const location = useLocation();
@@ -122,64 +118,53 @@ const WizardContainer: React.FunctionComponent<UseWizardProps> = props => {
   );
 };
 
-export const Wizard: WizardType = props => (
-  <Route
-    exact
-    path={[props.path, `${props.path}:stepIndex?`]}
-    render={() => (
-      <WizardContainer path={props.path} {...props}>
-        {props.children}
-      </WizardContainer>
-    )}
-  />
-);
-
 Wizard.defaultProps = {
-  cancelledPath: '/',
-  completedPath: '/completed/',
-  path: '/',
+  cancelledPath: "/",
+  completedPath: "/completed/",
+  path: "/",
 };
 
-Wizard.Step = ({ children }) => {
+const Step: React.FunctionComponent = ({ children }) => {
   return <>{children}</>;
 };
+Wizard.Step = Step;
 
 const GoToStep: React.FunctionComponent<GoToStepProps> = ({
   stepIndex,
   ...props
 }) => {
-  const wizard = React.useContext(WizardContext)!;
+  const wizard = React.useContext(WizardContext);
   return <Link {...props} to={`${wizard.path}${stepIndex}/`} />;
 };
 Wizard.GoToStep = GoToStep;
 
-const PreviousStep: React.FunctionComponent = props => {
-  const wizard = React.useContext(WizardContext)!;
+const PreviousStep: React.FunctionComponent = (props) => {
+  const wizard = React.useContext(WizardContext);
   const previousStepIndex = Math.max(wizard.stepIndex - 1, 0);
   return <GoToStep {...props} stepIndex={previousStepIndex} />;
 };
 Wizard.PreviousStep = PreviousStep;
 
-const NextStep: React.FunctionComponent = props => {
-  const wizard = React.useContext(WizardContext)!;
+const NextStep: React.FunctionComponent = (props) => {
+  const wizard = React.useContext(WizardContext);
   const nextStepIndex = Math.min(wizard.stepIndex + 1, wizard.stepCount - 1);
   return <GoToStep {...props} stepIndex={nextStepIndex} />;
 };
 Wizard.NextStep = NextStep;
 
-const Restart: React.FunctionComponent = props => {
-  const wizard = React.useContext(WizardContext)!;
+const Restart: React.FunctionComponent = (props) => {
+  const wizard = React.useContext(WizardContext);
   return <GoToStep {...props} stepIndex={wizard.initialStepIndex} />;
 };
 Wizard.Restart = Restart;
 
-const Cancel: React.FunctionComponent = props => {
-  const wizard = React.useContext(WizardContext)!;
+const Cancel: React.FunctionComponent = (props) => {
+  const wizard = React.useContext(WizardContext);
   return (
     <Link
       {...props}
       to={wizard.cancelledPath}
-      onClick={e => {
+      onClick={(e) => {
         window.scrollTo(0, 0);
         wizard.onCancel(e);
       }}
@@ -188,13 +173,13 @@ const Cancel: React.FunctionComponent = props => {
 };
 Wizard.Cancel = Cancel;
 
-const Complete: React.FunctionComponent = props => {
-  const wizard = React.useContext(WizardContext)!;
+const Complete: React.FunctionComponent = (props) => {
+  const wizard = React.useContext(WizardContext);
   return (
     <Link
       {...props}
       to={wizard.completedPath}
-      onClick={e => {
+      onClick={(e) => {
         window.scrollTo(0, 0);
         wizard.onComplete(e);
       }}

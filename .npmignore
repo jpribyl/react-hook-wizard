@@ -1,7 +1,4 @@
 node_modules
-lib
-dist
-build
-example
+lib/*.test.js
+lib/*.test.d.ts
 src
-demo.gif
