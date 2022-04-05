@@ -22,9 +22,6 @@ const TestWizard: React.FunctionComponent<
 
   return (
     <Wizard
-      path="/"
-      cancelledPath="/"
-      completedPath="/"
       initialStepIndex={0}
       onCancel={() => setIsShowingWizard(false)}
       onComplete={() => setIsShowingWizard(false)}
@@ -54,7 +51,10 @@ const WizardRouter: React.FunctionComponent<
   Partial<ComponentProps<typeof Wizard>>
 > = (props) => (
   <Router>
-    <TestWizard {...props} />
+    <Routes>
+      <Route path="/" element={<TestWizard {...props} />} />
+      <Route path="/:stepIndex" element={<TestWizard {...props} />} />
+    </Routes>
   </Router>
 );
 

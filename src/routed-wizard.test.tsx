@@ -22,9 +22,6 @@ const TestWizard: React.FunctionComponent<
 
   return (
     <Wizard
-      path="/"
-      cancelledPath="/"
-      completedPath="/"
       initialStepIndex={0}
       onCancel={() => setIsShowingWizard(false)}
       onComplete={() => setIsShowingWizard(false)}

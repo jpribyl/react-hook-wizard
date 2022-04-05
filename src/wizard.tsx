@@ -53,6 +53,13 @@ type WizardType = React.FunctionComponent<Partial<UseWizardProps>> & {
   Step: React.FC;
 };
 
+const formatPath = (path = "/") => {
+  if (path.startsWith("/") && path.endsWith("/")) return path;
+  if (path.startsWith("/")) return `${path}/`;
+  if (path.endsWith("/")) return `/${path}`;
+  return `/${path}/`;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 export const WizardContext = React.createContext<UseWizard>(undefined!);
 export const useWizard = ({
@@ -77,7 +84,7 @@ export const useWizard = ({
   React.useEffect(() => {
     window.scrollTo(0, 0);
     if (isFirstRender) {
-      navigate(`${path}${initialStepIndex}/`);
+      navigate(`${formatPath(path)}${initialStepIndex}/`);
       setIsFirstRender(false);
     } else {
       setMaxStepReached(Math.max(stepIndex, maxStepReached));
@@ -130,27 +137,32 @@ const WizardContainer: React.FunctionComponent<UseWizardProps> = (props) => {
 export const Wizard: WizardType = (props) => {
   const useWizardProps = {
     cancelledPath: "/",
-    completedPath: "/completed/",
+    completedPath: "/",
+    path: "/",
+    ...props,
+  };
+  return <WizardContainer {...useWizardProps} />;
+};
+
+export const RoutedWizard: WizardType = (props) => {
+  const useWizardProps = {
+    cancelledPath: "/",
+    completedPath: "/",
     path: "/",
     ...props,
   };
   return (
-    <Routes>
-      <Route path={props.path}>
-        <Route index element={<WizardContainer {...useWizardProps} />} />
-        <Route
-          path=":stepIndex"
-          element={<WizardContainer {...useWizardProps} />}
-        />
-      </Route>
-    </Routes>
-  );
-};
-
-export const RoutedWizard: WizardType = (props) => {
-  return (
     <BrowserRouter basename={props.basename}>
-      <Wizard {...props} />
+      <Routes>
+        <Route index element={<WizardContainer {...useWizardProps} />} />
+        <Route path={formatPath(props.path)}>
+          <Route index element={<WizardContainer {...useWizardProps} />} />
+          <Route
+            path=":stepIndex"
+            element={<WizardContainer {...useWizardProps} />}
+          />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 };
@@ -166,7 +178,7 @@ const GoToStep: React.FunctionComponent<GoToStepProps> = ({
   ...props
 }) => {
   const wizard = React.useContext(WizardContext);
-  return <Link {...props} to={`${wizard.path}${stepIndex}/`} />;
+  return <Link {...props} to={`${formatPath(wizard.path)}${stepIndex}/`} />;
 };
 Wizard.GoToStep = GoToStep;
 RoutedWizard.GoToStep = GoToStep;
