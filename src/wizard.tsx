@@ -135,16 +135,22 @@ export const Wizard: WizardType = (props) => {
     ...props,
   };
   return (
+    <Routes>
+      <Route path={props.path}>
+        <Route index element={<WizardContainer {...useWizardProps} />} />
+        <Route
+          path=":stepIndex"
+          element={<WizardContainer {...useWizardProps} />}
+        />
+      </Route>
+    </Routes>
+  );
+};
+
+export const RoutedWizard: WizardType = (props) => {
+  return (
     <BrowserRouter basename={props.basename}>
-      <Routes>
-        <Route path={props.path}>
-          <Route index element={<WizardContainer {...useWizardProps} />} />
-          <Route
-            path=":stepIndex"
-            element={<WizardContainer {...useWizardProps} />}
-          />
-        </Route>
-      </Routes>
+      <Wizard {...props} />
     </BrowserRouter>
   );
 };
@@ -153,6 +159,7 @@ const Step: React.FunctionComponent = ({ children }) => {
   return <>{children}</>;
 };
 Wizard.Step = Step;
+RoutedWizard.Step = Step;
 
 const GoToStep: React.FunctionComponent<GoToStepProps> = ({
   stepIndex,
@@ -162,6 +169,7 @@ const GoToStep: React.FunctionComponent<GoToStepProps> = ({
   return <Link {...props} to={`${wizard.path}${stepIndex}/`} />;
 };
 Wizard.GoToStep = GoToStep;
+RoutedWizard.GoToStep = GoToStep;
 
 const PreviousStep: React.FunctionComponent = (props) => {
   const wizard = React.useContext(WizardContext);
@@ -169,6 +177,7 @@ const PreviousStep: React.FunctionComponent = (props) => {
   return <GoToStep {...props} stepIndex={previousStepIndex} />;
 };
 Wizard.PreviousStep = PreviousStep;
+RoutedWizard.PreviousStep = PreviousStep;
 
 const NextStep: React.FunctionComponent = (props) => {
   const wizard = React.useContext(WizardContext);
@@ -176,12 +185,14 @@ const NextStep: React.FunctionComponent = (props) => {
   return <GoToStep {...props} stepIndex={nextStepIndex} />;
 };
 Wizard.NextStep = NextStep;
+RoutedWizard.NextStep = NextStep;
 
 const Restart: React.FunctionComponent = (props) => {
   const wizard = React.useContext(WizardContext);
   return <GoToStep {...props} stepIndex={wizard.initialStepIndex} />;
 };
 Wizard.Restart = Restart;
+RoutedWizard.Restart = Restart;
 
 const Cancel: React.FunctionComponent = (props) => {
   const wizard = React.useContext(WizardContext);
@@ -197,6 +208,7 @@ const Cancel: React.FunctionComponent = (props) => {
   );
 };
 Wizard.Cancel = Cancel;
+RoutedWizard.Cancel = Cancel;
 
 const Complete: React.FunctionComponent = (props) => {
   const wizard = React.useContext(WizardContext);
@@ -212,5 +224,6 @@ const Complete: React.FunctionComponent = (props) => {
   );
 };
 Wizard.Complete = Complete;
+RoutedWizard.Complete = Complete;
 
 export default Wizard;
