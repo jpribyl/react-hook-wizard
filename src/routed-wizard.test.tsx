@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import React, { ComponentProps, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Wizard from "./wizard";
+import { RoutedWizard as Wizard } from "./wizard";
 
 const TestWizard: React.FunctionComponent<
   Partial<ComponentProps<typeof Wizard>>
@@ -50,18 +50,10 @@ const TestWizard: React.FunctionComponent<
   );
 };
 
-const WizardRouter: React.FunctionComponent<
-  Partial<ComponentProps<typeof Wizard>>
-> = (props) => (
-  <Router>
-    <TestWizard {...props} />
-  </Router>
-);
-
 const setup = (props: Partial<ComponentProps<typeof Wizard>>) => {
   window.scrollTo = jest.fn();
   window.history.pushState({}, "", "/");
-  return render(<WizardRouter {...props} />);
+  return render(<TestWizard {...props} />);
 };
 
 test("does not initially render the wizard", () => {
