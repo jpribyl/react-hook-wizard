@@ -3,7 +3,6 @@ import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React, { ComponentProps, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Wizard from "./wizard";
 
@@ -22,8 +21,6 @@ const TestWizard: React.FunctionComponent<
 
   return (
     <Wizard
-      path="/"
-      cancelledPath="/"
       completedPath="/"
       initialStepIndex={0}
       onCancel={() => setIsShowingWizard(false)}
@@ -50,23 +47,10 @@ const TestWizard: React.FunctionComponent<
   );
 };
 
-const WizardRouter: React.FunctionComponent<
-  Partial<ComponentProps<typeof Wizard>>
-> = (props) => (
-  <Router>
-    <Routes>
-      <Route path="/">
-        <Route index element={<TestWizard {...props} />} />
-        <Route path=":stepIndex" element={<TestWizard {...props} />} />
-      </Route>
-    </Routes>
-  </Router>
-);
-
 const setup = (props: Partial<ComponentProps<typeof Wizard>>) => {
   window.scrollTo = jest.fn();
   window.history.pushState({}, "", "/");
-  return render(<WizardRouter {...props} />);
+  return render(<TestWizard {...props} />);
 };
 
 test("does not initially render the wizard", () => {

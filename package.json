@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-wizard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight, strongly typed wizard component using react hooks",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -49,7 +49,7 @@
     "prettier": "^2.6.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.2.2",
+    "react-router-dom": "^6.3.0",
     "testing-library": "^0.0.2",
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"

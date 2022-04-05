@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const castArray = (...args: any) => (args[0] instanceof Array ? args[0] : args);
@@ -21,7 +29,8 @@ type UseWizardMatchParams = {
 };
 
 type UseWizardProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  basename?: string;
   cancelledPath: string;
   completedPath: string;
   initialStepIndex?: number;
@@ -34,7 +43,7 @@ type GoToStepProps = React.HTMLAttributes<Element> & {
   stepIndex: number;
 };
 
-type WizardType = React.FunctionComponent<UseWizardProps> & {
+type WizardType = React.FunctionComponent<Partial<UseWizardProps>> & {
   Cancel: React.FC<Omit<React.HTMLAttributes<Element>, "to" | "onClick">>;
   Complete: React.FC<Omit<React.HTMLAttributes<Element>, "to" | "onClick">>;
   GoToStep: React.FC<GoToStepProps>;
@@ -100,7 +109,7 @@ export const useWizard = ({
   };
 };
 
-export const Wizard: WizardType = (props) => {
+const WizardContainer: React.FunctionComponent<UseWizardProps> = (props) => {
   const { children } = props;
   const wizard = useWizard(props);
   const location = useLocation();
@@ -118,10 +127,26 @@ export const Wizard: WizardType = (props) => {
   );
 };
 
-Wizard.defaultProps = {
-  cancelledPath: "/",
-  completedPath: "/completed/",
-  path: "/",
+export const Wizard: WizardType = (props) => {
+  const useWizardProps = {
+    cancelledPath: "/",
+    completedPath: "/completed/",
+    path: "/",
+    ...props,
+  };
+  return (
+    <BrowserRouter basename={props.basename}>
+      <Routes>
+        <Route path={props.path}>
+          <Route index element={<WizardContainer {...useWizardProps} />} />
+          <Route
+            path=":stepIndex"
+            element={<WizardContainer {...useWizardProps} />}
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 const Step: React.FunctionComponent = ({ children }) => {
